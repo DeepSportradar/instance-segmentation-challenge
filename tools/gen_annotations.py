@@ -83,9 +83,10 @@ def dump_split(name, splits, *, root):
     json.dump(ret, open(f'deepsport_dataset/{name}.json', 'w'))
 
 
-root = scan()
-dump_split('train', 'BCDE', root=root)
-dump_split('val', 'BCDE', root=root)
-dump_split('trainval', 'BCDE', root=root)
-dump_split('test', 'A', root=root)
-dump_split('trainvaltest', 'ABCDE', root=root)
+if __name__ == '__main__':
+    root = scan()
+    dump_split('train', 'BCDE', root=root)
+    dump_split('val', 'BCDE', root=root)
+    dump_split('trainval', 'BCDE', root=root)
+    dump_split('test', 'A', root=root)
+    dump_split('trainvaltest', 'ABCDE', root=root)
