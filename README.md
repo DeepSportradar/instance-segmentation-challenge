@@ -26,7 +26,7 @@ unzip -qo ./deepsport-dataset.zip -d deepsport_dataset
 
 Once the dataset is downloaded and unzipped, the command
 
-```
+```bash
 python3 tools/gen_annotations.py
 ```
 
@@ -78,7 +78,7 @@ python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py 
 
 When the challenge set is released (as a new set of images and a `challenge.json` file), the following commands could be used to obtain the submission file:
 
-```
+```bash
 python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py \
     work_dirs/mask_rcnn_x101_64x4d_fpn_1x_challenge/epoch_5.pth \
     --cfg-options data.test.ann_file=deepsport_dataset/challenge.json \
@@ -87,6 +87,6 @@ python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py 
 python tools/convert_output.py challenge-output.pkl
 ```
 
-And the resulting `challenge-output.json` file be uploaded on EvalAI.
+And here should appear the resulting `challenge-output.json` file ready to be uploaded on EvalAI.
 
 ## License
