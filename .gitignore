@@ -1,3 +1,5 @@
 deepsport-dataset.zip
 deepsport_dataset
 *.pyc
+work_dirs
+.ipynb_checkpoints

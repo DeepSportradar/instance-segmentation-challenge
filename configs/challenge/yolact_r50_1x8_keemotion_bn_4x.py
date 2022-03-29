@@ -1,4 +1,4 @@
-_base_ = 'configs/_base_/default_runtime.py'
+_base_ = '../_base_/default_runtime.py'
 
 # model settings
 img_size = 550

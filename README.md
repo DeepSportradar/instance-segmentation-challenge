@@ -59,6 +59,10 @@ python tools/train.py TODO/yolact_r50_1x8_keemotion_bn_4x.py --cfg-options optim
 
 ### Mask-RCNN
 
+```bash
+python tools/train.py TODO/mask_rcnn_x101_64x4d_fpn_1x_challenge.py --cfg-options optimizer.lr=0.003
+```
+
 ## Submission
 
 ## License
