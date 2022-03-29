@@ -8,7 +8,6 @@ def parse_args():
 
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output-file', default=None)
-    parser.add_argument('--json-to-pkl', action='store_true', default=False)
 
     args = parser.parse_args()
 
@@ -58,6 +57,7 @@ if __name__ == '__main__':
         json_input = json.load(open(args.input_file, 'r'))
         pkl_output = json_to_pkl(json_input)
         pickle.dump(pkl_output, open(args.output_file, 'wb'))
+
     elif args.input_file.endswith('.pkl'):
         pkl_input = pickle.load(open(args.input_file, 'rb'))
         json_output = pkl_to_json(pkl_input)

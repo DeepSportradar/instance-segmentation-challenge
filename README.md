@@ -63,6 +63,30 @@ python tools/train.py TODO/yolact_r50_1x8_keemotion_bn_4x.py --cfg-options optim
 python tools/train.py TODO/mask_rcnn_x101_64x4d_fpn_1x_challenge.py --cfg-options optimizer.lr=0.003
 ```
 
-## Submission
+## Test, inference and submission
+
+Testing can be performed using the following command:
+
+```bash
+python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py \
+    work_dirs/mask_rcnn_x101_64x4d_fpn_1x_challenge/epoch_5.pth \
+    --cfg-options data.test.ann_file=deepsport_dataset/test.json \
+    --show-dir output-vis \
+    --out test-output.pkl \
+    --eval bbox segm
+```
+
+When the challenge set is released (as a new set of images and a `challenge.json` file), the following commands could be used to obtain the submission file:
+
+```
+python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py \
+    work_dirs/mask_rcnn_x101_64x4d_fpn_1x_challenge/epoch_5.pth \
+    --cfg-options data.test.ann_file=deepsport_dataset/challenge.json \
+    --show-dir output-vis \
+    --out challenge-output.pkl
+python tools/convert_output.py challenge-output.pkl
+```
+
+And the resulting `challenge-output.json` file be uploaded on EvalAI.
 
 ## License
