@@ -2,9 +2,6 @@
 
 ## TODO
 
-- [ ] Adapt when Kaggle is fixed
-- [ ] Lay down the submission format
-- [ ] Lay down the dataset layout
 - [ ] Provide examples
 
 ## Installation
@@ -62,7 +59,7 @@ python tools/train.py TODO/yolact_r50_1x8_keemotion_bn_4x.py --cfg-options optim
 ### Mask-RCNN
 
 ```bash
-python tools/train.py TODO/mask_rcnn_x101_64x4d_fpn_1x_challenge.py --cfg-options optimizer.lr=0.003
+python tools/train.py TODO/mask_rcnn_x101_64x4d_fpn_20e_challenge.py --cfg-options optimizer.lr=0.003
 ```
 
 ## Test, inference and submission
@@ -70,9 +67,8 @@ python tools/train.py TODO/mask_rcnn_x101_64x4d_fpn_1x_challenge.py --cfg-option
 Testing can be performed using the following command:
 
 ```bash
-python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py \
-    work_dirs/mask_rcnn_x101_64x4d_fpn_1x_challenge/epoch_5.pth \
-    --cfg-options data.test.ann_file=deepsport_dataset/test.json \
+python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
+    work_dirs/mask_rcnn_x101_64x4d_fpn_20e_challenge/latest.pth \
     --show-dir test-vis \
     --out test-output.pkl \
     --eval bbox segm
@@ -81,8 +77,8 @@ python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py 
 When the challenge set is released (as a new set of images and a `challenge.json` file **without no annotation***), the following commands could be used to obtain the submission file:
 
 ```bash
-python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_1x_challenge.py \
-    work_dirs/mask_rcnn_x101_64x4d_fpn_1x_challenge/epoch_5.pth \
+python tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
+    work_dirs/mask_rcnn_x101_64x4d_fpn_20e_challenge/latest.pth \
     --cfg-options data.test.ann_file=deepsport_dataset/challenge.json \
     --show-dir challenge-vis \
     --out challenge-output.pkl
@@ -105,7 +101,9 @@ image_result: [
     [masks]
 ]
 
-bboxes: A list of
+bboxes: [x1, y1, x2, y2, confidence]
+
+masks: {size: [], }
 ```
 
 ## License

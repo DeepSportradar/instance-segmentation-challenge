@@ -43,7 +43,7 @@ def json_to_pkl(json_data):
         for bbox, masks in json_data
     ]
     output = [
-        ((bbox,), (masks,))
+        ([bbox], [masks])
         for bbox, masks in output
     ]
     return output
