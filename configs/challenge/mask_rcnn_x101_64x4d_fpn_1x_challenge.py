@@ -13,14 +13,14 @@ model = dict(
         init_cfg=dict(
             type='Pretrained', checkpoint='open-mmlab://resnext101_64x4d')),
     roi_head=dict(
-        bbox_head=dict(num_classes=2),
-        mask_head=dict(num_classes=2)),
+        bbox_head=dict(num_classes=1),
+        mask_head=dict(num_classes=1)),
     )
 
 # dataset settings
 dataset_type = 'CocoDataset'
 data_root = 'deepsport_dataset/'
-classes = ['background', 'human']
+classes = ['human']
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [

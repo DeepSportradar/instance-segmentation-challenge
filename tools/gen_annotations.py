@@ -25,8 +25,7 @@ def scan():
     images = sorted(images)
 
     root = dict(images=[], annotations=[], categories=[
-        dict(id=0, name="background", supercategory="background"),
-        dict(id=1, name="human", supercategory="human"),
+        dict(id=0, name="human", supercategory="human"),
     ])
 
     an_id = -1
@@ -50,7 +49,7 @@ def scan():
             root['annotations'].append(dict(
                 id=len(root['annotations']),
                 image_id=img_id,
-                category_id=1,
+                category_id=0,
                 area=mask_tools.area(rle).item(),
                 bbox=mask_tools.toBbox(rle).tolist(),
                 segmentation=dict(size=rle['size'], counts=rle['counts'].decode('utf-8')),

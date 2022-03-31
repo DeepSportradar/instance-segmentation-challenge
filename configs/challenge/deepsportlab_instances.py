@@ -1,6 +1,7 @@
 # dataset settings
 dataset_type = 'CocoDataset'
 data_root = 'deepsport_dataset/'
+classes = ['human']
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -32,16 +33,19 @@ data = dict(
     samples_per_gpu=2,
     workers_per_gpu=2,
     train=dict(
+        classes=classes,
         type=dataset_type,
         ann_file=data_root + 'train.json',
         img_prefix=data_root,
         pipeline=train_pipeline),
     val=dict(
+        classes=classes,
         type=dataset_type,
         ann_file=data_root + 'val.json',
         img_prefix=data_root,
         pipeline=test_pipeline),
     test=dict(
+        classes=classes,
         type=dataset_type,
         ann_file=data_root + 'test.json',
         img_prefix=data_root,

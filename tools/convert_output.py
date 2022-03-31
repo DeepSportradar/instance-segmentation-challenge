@@ -29,7 +29,7 @@ def pkl_to_json(pkl_data):
          [dict(size=rle['size'], counts=rle['counts'].decode('utf-8'))
           for rle in masks
          ])
-        for (_, bbox), (_, masks) in pkl_data
+        for (bbox, *_), (masks, *_) in pkl_data
     ]
     return output
 
@@ -43,8 +43,7 @@ def json_to_pkl(json_data):
         for bbox, masks in json_data
     ]
     output = [
-        ((np.zeros((0,5), dtype=np.float32), bbox),
-         ([], masks))
+        ((bbox,), (masks,))
         for bbox, masks in output
     ]
     return output
