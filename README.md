@@ -1,12 +1,13 @@
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
+- [ ] Add license file
+
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
   - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
   - [About the splits](#about-the-splits)
   - [Installing MMDet](#installing-mmdet)
 - [Baseline](#baseline)
-  - [Mask-RCNN](#mask-rcnn)
 - [Test, inference and submission](#test-inference-and-submission)
 - [Participating with another codebase](#participating-with-another-codebase)
 - [License](#license)
@@ -48,7 +49,7 @@ should create the COCO-format JSON files for the various splits.
 
 ### About the splits
 
-The provided annotations are first split in a *trainval* set (XXX images) and a *test* set (XXX images), each containing images taken from different arenas. We further split the *trainval* set in the *train* (XXX images) and *val* (XX images) sets.
+The provided annotations are first split in a *trainval* set (246 images) and a *test* set (64 images), each containing images taken from different arenas. We further split the *trainval* set in the *train* (211 images) and *val* (35 images) sets in a deterministic manner.
 
 We encourage to use those sets as it pleases. Another set of **unannotated** images, the *challenge* set will be provided later to establish the scoreboard.
 
@@ -59,19 +60,17 @@ To make the splits as convenient as possible to use, each of *train*, *val*, *te
 https://mmdetection.readthedocs.io/en/v2.2.0/install.html
 
 
-```
+```bash
 pip install openmim
 mim install mmdet==2.21.0
 ```
 
 ## Baseline
 
-We propose
-
-### Mask-RCNN
+We propose the well-established Mask-RCNN model provided by MMDet as a baseline for this challenge.
 
 ```bash
-python tools/train.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py --cfg-options optimizer.lr=0.01
+python tools/train.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py
 ```
 
 ## Test, inference and submission
@@ -110,13 +109,18 @@ What really matters in the end is for the submission file to be in the right for
 
 image_result: [
     [bboxes],
-    [masks]
+    [rle_masks]
 ]
 
 bboxes: [x1, y1, x2, y2, confidence]
 
-masks: {size: [], }
+rle_masks: {
+    "size": [H,W],
+    "counts": RLE encoding of the mask, mask_tools.encode(np.asfortranarray(mask)).decode('utf-8'))
+}
 ```
+
+More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py).
 
 ## License
 
