@@ -1,8 +1,9 @@
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
 - [ ] Add license file
+- [ ] Setup EvalAI evaluation
 
-
+**Table of contents**
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
   - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
@@ -91,7 +92,7 @@ python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.p
     --eval bbox segm
 ```
 
-When the challenge set is released (as a new set of images and a `challenge.json` file **without no annotation***), the following commands could be used to obtain the submission file:
+When the challenge set is released (as a new set of images and a `challenge.json` file **without no annotation**), the following commands could be used to obtain the submission file:
 
 ```bash
 python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
@@ -135,7 +136,7 @@ More details to generate the RLE representation from masks can be found in [tool
 
 ### Computing metrics
 
-Metrics with respect to the test set can be computed using the `tools/test_json.py` script.
+Metrics with respect to the test set (or any other set) can be computed using the `tools/test_json.py` script.
 
 ```bash
 python3 tools/test_json.py test-output.json \
