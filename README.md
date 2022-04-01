@@ -1,8 +1,23 @@
-# DeepSportRadar Instance Segmentation Challenge
+# DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
-## TODO
+- [Installation](#installation)
+  - [Downloading the dataset](#downloading-the-dataset)
+  - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
+  - [About the splits](#about-the-splits)
+  - [Installing MMDet](#installing-mmdet)
+- [Baseline](#baseline)
+  - [Mask-RCNN](#mask-rcnn)
+- [Test, inference and submission](#test-inference-and-submission)
+- [Participating with another codebase](#participating-with-another-codebase)
+- [License](#license)
 
-- [ ] Provide examples
+This challenge tackles the segmentation of individual humans (players, coaches and referees) on a basketball court. We believe the main characteristics of this dataset are that
+
+- players are highly deformable, with some thin parts (arms, legs);
+- there is a high level of occlusions between players, and reconnection through occlusions is something we may want our models to perform;
+- the amount of data is quite limited compared to some other instance segmentation datasets.
+
+Futhermore, the fact that humans are approximately the same size makes the metrics less tricky to break down, to focus on those particular problems.
 
 ## Installation
 
@@ -45,21 +60,18 @@ https://mmdetection.readthedocs.io/en/v2.2.0/install.html
 
 
 ```
+pip install openmim
 mim install mmdet==2.21.0
 ```
 
-## Baselines
+## Baseline
 
-### YOLACT
-
-```bash
-python tools/train.py TODO/yolact_r50_1x8_keemotion_bn_4x.py --cfg-options optimizer.lr=0.003
-```
+We propose
 
 ### Mask-RCNN
 
 ```bash
-python tools/train.py TODO/mask_rcnn_x101_64x4d_fpn_20e_challenge.py --cfg-options optimizer.lr=0.003
+python tools/train.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py --cfg-options optimizer.lr=0.01
 ```
 
 ## Test, inference and submission

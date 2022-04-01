@@ -1,4 +1,10 @@
 _base_ = '../mask-rcnn/mask_rcnn_x101_32x4d_fpn_1x_coco.py'
+
+# optimizer
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=None)
+
+# model settings
 model = dict(
     backbone=dict(
         type='ResNeXt',
