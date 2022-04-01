@@ -2,6 +2,7 @@
 
 - [ ] Add license file
 
+
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
   - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
@@ -113,7 +114,8 @@ What really matters in the end is for the submission file to be in the right for
 
 
 ```
-[image_result] A list of image results, in the same order as the images in challenge.json
+[image_result] A list of image results, in the same order as the images
+               in the JSON set file
 
 image_result: [
     [bbox],
@@ -123,7 +125,7 @@ image_result: [
 bbox: [x1, y1, x2, y2, confidence]
 
 rle_mask: {
-    "size": [H,W],
+    "size": [H, W], the mask shape, basically image height and width
     "counts": string with RLE encoding of the mask, along the lines of
               mask_tools.encode(np.asfortranarray(mask)).decode('utf-8')
 }
@@ -136,7 +138,8 @@ More details to generate the RLE representation from masks can be found in [tool
 Metrics with respect to the test set can be computed using the `tools/test_json.py` script.
 
 ```bash
-python3 tools/test_json.py test-output.json --cfg-options data.test.ann_file=deepsport_dataset/test.json
+python3 tools/test_json.py test-output.json \
+    --cfg-options data.test.ann_file=deepsport_dataset/test.json
 ```
 
 ## License
