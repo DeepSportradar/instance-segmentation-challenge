@@ -1,22 +1,24 @@
-# CHALLENGE START OFFICIALLY APRIL 6th. Stayed tuned.
+# CHALLENGE STARTS OFFICIALLY APRIL 6th. Stay tuned. <!-- omit in toc -->
 
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm)
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
+Part of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize. See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
+
 **Table of contents**
-- [CHALLENGE START OFFICIALLY APRIL 6th. Stayed tuned.](#challenge-start-officially-april-6th-stayed-tuned)
-  - [Installation](#installation)
-    - [Downloading the dataset](#downloading-the-dataset)
-    - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
-    - [About the splits](#about-the-splits)
-  - [Using MMDet](#using-mmdet)
-    - [Installation](#installation-1)
-    - [Baseline](#baseline)
-    - [Test, metrics and submission](#test-metrics-and-submission)
-  - [Participating with another codebase](#participating-with-another-codebase)
-    - [Submission format](#submission-format)
-    - [Computing metrics](#computing-metrics)
-  - [License](#license)
+- [Installation](#installation)
+  - [Downloading the dataset](#downloading-the-dataset)
+  - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
+  - [About the splits](#about-the-splits)
+- [Using MMDet](#using-mmdet)
+  - [Installation](#installation-1)
+  - [Baseline](#baseline)
+  - [Test, metrics and submission](#test-metrics-and-submission)
+- [Participating with another codebase](#participating-with-another-codebase)
+  - [Submission format](#submission-format)
+  - [Computing metrics](#computing-metrics)
+- [License](#license)
 
 This challenge tackles the segmentation of individual humans (players, coaches and referees) on a basketball court. We believe the main characteristics of this dataset are that
 
