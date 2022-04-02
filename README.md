@@ -3,22 +3,20 @@
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
-- [ ] Add license file
-- [ ] Setup EvalAI evaluation
-
 **Table of contents**
-- [Installation](#installation)
-  - [Downloading the dataset](#downloading-the-dataset)
-  - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
-  - [About the splits](#about-the-splits)
-- [Using MMDet](#using-mmdet)
-  - [Installation](#installation-1)
-  - [Baseline](#baseline)
-  - [Test, metrics and submission](#test-metrics-and-submission)
-- [Participating with another codebase](#participating-with-another-codebase)
-  - [Submission format](#submission-format)
-  - [Computing metrics](#computing-metrics)
-- [License](#license)
+- [CHALLENGE START OFFICIALLY APRIL 6th. Stayed tuned.](#challenge-start-officially-april-6th-stayed-tuned)
+  - [Installation](#installation)
+    - [Downloading the dataset](#downloading-the-dataset)
+    - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
+    - [About the splits](#about-the-splits)
+  - [Using MMDet](#using-mmdet)
+    - [Installation](#installation-1)
+    - [Baseline](#baseline)
+    - [Test, metrics and submission](#test-metrics-and-submission)
+  - [Participating with another codebase](#participating-with-another-codebase)
+    - [Submission format](#submission-format)
+    - [Computing metrics](#computing-metrics)
+  - [License](#license)
 
 This challenge tackles the segmentation of individual humans (players, coaches and referees) on a basketball court. We believe the main characteristics of this dataset are that
 
@@ -106,7 +104,7 @@ python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.p
 python3 tools/convert_output.py challenge-output.pkl
 ```
 
-And here should appear the resulting `challenge-output.json` file ready to be uploaded on EvalAI.
+And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview).
 
 ## Participating with another codebase
 
@@ -122,8 +120,8 @@ What really matters in the end is for the submission file to be in the right for
                in the JSON set file
 
 image_result: [
-    [bbox],
-    [rle_mask]
+    [bbox],     one bounding box for each detection
+    [rle_mask]  one rle-encoded mask for each detection
 ]
 
 bbox: [x1, y1, x2, y2, confidence]
@@ -131,11 +129,11 @@ bbox: [x1, y1, x2, y2, confidence]
 rle_mask: {
     "size": [H, W], the mask shape, basically image height and width
     "counts": string with RLE encoding of the mask, along the lines of
-              mask_tools.encode(np.asfortranarray(mask)).decode('utf-8')
+              mask_tools.encode(np.asfortranarray(mask))["counts"].decode('utf-8')
 }
 ```
 
-More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py#L47=).
+More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py#L47=). Bounding boxes can also be computed from the mask as is demonstrated [there](tools/gen_annotations.py#L54=), please don't forget to add the confidence.
 
 ### Computing metrics
 

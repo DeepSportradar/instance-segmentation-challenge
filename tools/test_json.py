@@ -4,8 +4,6 @@ import os.path as osp
 import time
 import warnings
 
-import mmcv
-import torch
 from mmcv import Config, DictAction
 from mmcv.cnn import fuse_conv_bn
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
