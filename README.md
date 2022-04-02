@@ -1,3 +1,6 @@
+# CHALLENGE START OFFICIALLY APRIL 6th. Stayed tuned.
+
+
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
 - [ ] Add license file
