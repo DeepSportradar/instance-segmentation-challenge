@@ -20,8 +20,8 @@ def scan():
     """
     Compute the full COCO-format annotation JSON from the files on the disk.
     """
-    files = glob.glob(f'deepsport_dataset/*/*/*')
-    images = set([re.sub(r"(_(0|40|humans)\.png|\.json)", "", file) for file in files])
+    files = glob.glob(f'deepsport_dataset/*/*/*_humans.png')
+    images = set([re.sub(r"_(humans)\.png", "", file) for file in files])
     images = sorted(images)
 
     root = dict(images=[], annotations=[], categories=[

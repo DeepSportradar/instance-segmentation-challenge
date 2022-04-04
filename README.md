@@ -1,6 +1,6 @@
 # CHALLENGE STARTS OFFICIALLY APRIL 6th. Stay tuned. <!-- omit in toc -->
 
-[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm) [![Compete on EvalAI](https://badgen.net/badge/compete%20on/EvalAI/blue)](https://eval.ai/web/challenges/challenge-page/1685/overview) [![Win $1,000.00](https://badgen.net/badge/win/%241%2C000.00/yellow)](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html)
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm) [![Compete on EvalAI](https://badgen.net/badge/compete%20on/EvalAI/blue)](https://eval.ai/web/challenges/challenge-page/1685/overview) [![Win $1,000.00](https://badgen.net/badge/win/%241%2C000.00/yellow)](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) [![Kaggle Dataset](https://badgen.net/badge/kaggle/dataset/blue)](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset)
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
@@ -32,7 +32,7 @@ Futhermore, the fact that humans are approximately the same size makes the metri
 
 ### Downloading the dataset
 
-The dataset can be found [here](https://www.kaggle.com/datasets/gabrielvanzandycke/deepsport-dataset). It can be downloaded and unzipped manually in the deepsport_dataset folder of the project.
+The dataset can be found [here](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset). It can be downloaded and unzipped manually in the deepsport_dataset folder of the project.
 
 We will here download it programmatically. First install the kaggle CLI.
 
@@ -43,8 +43,8 @@ pip install kaggle
 Go to your Kaggle Account page and click on `Create new API Token` to download the file to be saved as `~/.kaggle/kaggle.json` for authentication.
 
 ```bash
-kaggle datasets download gabrielvanzandycke/deepsport-dataset
-unzip -qo ./deepsport-dataset.zip -d deepsport_dataset
+kaggle datasets download deepsportradar/basketball-instants-dataset
+unzip -qo ./basketball-instants-dataset.zip -d deepsport_dataset
 ```
 
 ### The COCO-format annotation files
@@ -53,11 +53,11 @@ The `.json` files provided in the `annotations/` folder by this repository are a
 
 ```bash
 python3 tools/gen_annotations.py
-# train 211 images 1606 annotations
-# val 35 images 293 annotations
-# trainval 246 images 1899 annotations
+# train 223 images 1674 annotations
+# val 37 images 344 annotations
+# trainval 260 images 2018 annotations
 # test 64 images 477 annotations
-# trainvaltest 310 images 2376 annotations
+# trainvaltest 324 images 2495 annotations
 ```
 
 Having no change with respect to the annotation files distributed confirms that the dataset is properly setup.
