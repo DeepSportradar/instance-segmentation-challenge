@@ -53,9 +53,14 @@ The `.json` files provided in the `annotations/` folder by this repository are a
 
 ```bash
 python3 tools/gen_annotations.py
+# train 211 images 1606 annotations
+# val 35 images 293 annotations
+# trainval 246 images 1899 annotations
+# test 64 images 477 annotations
+# trainvaltest 310 images 2376 annotations
 ```
 
-Having no change with respect to files distributed means that the dataset should be correctly configured.
+Having no change with respect to the annotation files distributed confirms that the dataset is properly setup.
 
 ### About the splits
 
