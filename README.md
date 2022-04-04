@@ -33,7 +33,7 @@ Futhermore, the fact that humans are approximately the same size makes the metri
 
 As this is a segmentation challenge, the goal is to obtain the best `segm_mAP` metric on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on an unannotated *challenge* set that will be provided late in June.
 
-The competitors are asked to do create models that only rely on the provided data for training. (except for initial weights that can come from well-established public methods pre-trained on public data. **This must be clearly stated**)
+The competitors are asked to create models that only rely on the provided data for training. (except for initial weights that can come from well-established public methods pre-trained on public data. **This must be clearly stated in publication/report**)
 
 Please see the challenge page for more details: [https://deepsportradar.github.io/challenge.html](https://deepsportradar.github.io/challenge.html).
 
