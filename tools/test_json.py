@@ -48,7 +48,7 @@ def main():
 
     assert args.json.endswith('.json') or args.unsafe
 
-    cfg = Config.fromfile('configs/challenge/deepsportlab_instances.py')
+    cfg = Config.fromfile('configs/challenge/deepsportradar_instances.py')
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
     cfg.data.test.test_mode = True
