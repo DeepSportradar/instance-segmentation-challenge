@@ -124,16 +124,15 @@ python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.p
 python3 tools/convert_output.py challenge-output.pkl
 ```
 
-And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview).
+And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). Please note that it would not make sense to pass the `--eval bbox segm` arguments as there will be no annotation on that set.
 
 ## Participating with another codebase
 
-It is totally possible to use another codebase that this one to participate in the challenge. The dataset images and split files should be usable in any codebase able to read a COCO format dataset. Only specificity is that this one has one class with ID 1 for humans. For compatiblity reasons, MMDet methods are used with two classes, and the class 0 never used.
+It is totally possible to use another codebase than this one to participate in the challenge. The dataset images and split files should be usable in any codebase able to read a COCO format dataset. Only specificity is that this one has one class with ID 0 for humans. If needed, MMDet methods could be used with two classes, and the class 1 never used.
 
 ### Submission format
 
 What really matters in the end is for the submission file to be in the right format: the challenge-output.json should have the following layout:
-
 
 ```
 [image_result] A list of image results, in the same order as the images
@@ -153,7 +152,7 @@ rle_mask: {
 }
 ```
 
-More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py#L47=). Bounding boxes can also be computed from the mask as is demonstrated [there](tools/gen_annotations.py#L54=), please don't forget to add the confidence.
+More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py#L47=). Bounding boxes can also be computed from the mask as is demonstrated [there](tools/gen_annotations.py#L54=), please don't forget to add the confidence and reorder the items if needed.
 
 ### Computing metrics
 
