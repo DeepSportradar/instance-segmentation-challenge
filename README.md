@@ -28,11 +28,19 @@ This challenge tackles the segmentation of individual humans (players, coaches a
 
 Futhermore, the fact that humans are approximately the same size makes the metrics less tricky to break down, to focus on those particular problems.
 
+## Challenge rules
+
+As this is a segmentation challenge, the goal is to obtain the best `segm_mAP` metric on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on an unannotated *challenge* set that will be provided late in June.
+
+The competitors are asked to do create models that only rely on the provided data for training. (except for initial weights that can come from well-established public methods pre-trained on public data **this must be clearly stated**)
+
+Please see the challenge page for more details: [https://deepsportradar.github.io/challenge.html](https://deepsportradar.github.io/challenge.html).
+
 ## Installation
 
 ### Downloading the dataset
 
-The dataset can be found [here](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset). It can be downloaded and unzipped manually in the deepsport_dataset folder of the project.
+The dataset can be found [here](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset). It can be downloaded and unzipped manually in the `deepsport_dataset/` folder of the project.
 
 We will here download it programmatically. First install the kaggle CLI.
 
@@ -66,7 +74,7 @@ Having no change with respect to the annotation files distributed confirms that 
 
 The provided annotations are first split in a *trainval* set (246 images) and a *test* set (64 images), each containing images taken from different arenas. We further split the *trainval* set in the *train* (211 images) and *val* (35 images) sets in a deterministic manner.
 
-We encourage to use those sets as it pleases. Another set of **unannotated** images, the *challenge* set will be provided later to establish the scoreboard.
+We encourage to use those sets as it pleases, but remember you'd probably want to avoid overfitting the *test* set. Another set of **unannotated** images, the *challenge* set will be provided later to establish the true leaderboards.
 
 To make the splits as convenient as possible to use, each of *train*, *val*, *test*, *trainval* and *trainvaltest* sets have their own JSON. It is for instance useful to train the very final model on *trainvaltest* for it to have seen as much data as possible before inference on the *challenge* images.
 
@@ -89,6 +97,8 @@ We propose the well-established Mask-RCNN model provided by MMDet as a baseline 
 ```bash
 python3 tools/train.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py
 ```
+
+Feel free to integrate any improvement or try a completely different model!
 
 ### Test, metrics and submission
 
