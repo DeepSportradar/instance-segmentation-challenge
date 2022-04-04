@@ -1,6 +1,6 @@
 # CHALLENGE STARTS OFFICIALLY APRIL 6th. Stay tuned. <!-- omit in toc -->
 
-[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm)
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm) [![Win $1,000.00](https://badgen.net/badge/win/$1,000.00/yellow)](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) [![Compete on EvalAI](https://badgen.net/badge/compete%20on/EvalAI/blue)](https://eval.ai/web/challenges/challenge-page/1685/overview)
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
