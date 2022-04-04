@@ -79,7 +79,7 @@ def dump_split(name, splits, *, root):
     ret['annotations'] = [annot for annot in root['annotations']
                           if annot['image_id'] in kept_im_ids]
     print(name, len(ret['images']), 'images', len(ret['annotations']), 'annotations')
-    json.dump(ret, open(f'deepsport_dataset/{name}.json', 'w'))
+    json.dump(ret, open(f'annotations/{name}.json', 'w'))
 
 
 if __name__ == '__main__':

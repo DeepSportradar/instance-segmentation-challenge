@@ -4,12 +4,12 @@
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
-Part of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize. See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
+One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize. See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
 **Table of contents**
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
-  - [Generating COCO-format annotation files](#generating-coco-format-annotation-files)
+  - [The COCO-format annotation files](#the-coco-format-annotation-files)
   - [About the splits](#about-the-splits)
 - [Using MMDet](#using-mmdet)
   - [Installation](#installation-1)
@@ -32,7 +32,9 @@ Futhermore, the fact that humans are approximately the same size makes the metri
 
 ### Downloading the dataset
 
-First install the kaggle CLI.
+The dataset can be found [here](https://www.kaggle.com/datasets/gabrielvanzandycke/deepsport-dataset). It can be downloaded and unzipped manually in the deepsport_dataset folder of the project.
+
+We will here download it programmatically. First install the kaggle CLI.
 
 ```bash
 pip install kaggle
@@ -45,15 +47,15 @@ kaggle datasets download gabrielvanzandycke/deepsport-dataset
 unzip -qo ./deepsport-dataset.zip -d deepsport_dataset
 ```
 
-### Generating COCO-format annotation files
+### The COCO-format annotation files
 
-Once the dataset is downloaded and unzipped, the command
+The `.json` files provided in the `annotations/` folder by this repository are annotation files for the different splits of the dataset. They comply with the COCO format, and can be re-generated using the following command once the dataset is setup:
 
 ```bash
 python3 tools/gen_annotations.py
 ```
 
-should create the COCO-format JSON files for the various splits.
+Having no change with respect to files distributed means that the dataset should be correctly configured.
 
 ### About the splits
 
@@ -100,7 +102,7 @@ When the challenge set is released (as a new set of images and a `challenge.json
 ```bash
 python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
     work_dirs/mask_rcnn_x101_64x4d_fpn_20e_challenge/latest.pth \
-    --cfg-options data.test.ann_file=deepsport_dataset/challenge.json \
+    --cfg-options data.test.ann_file=annotations/challenge.json \
     --show-dir challenge-vis \
     --out challenge-output.pkl
 python3 tools/convert_output.py challenge-output.pkl
@@ -143,7 +145,7 @@ Metrics with respect to the test set (or any other set) can be computed using th
 
 ```bash
 python3 tools/test_json.py test-output.json \
-    --cfg-options data.test.ann_file=deepsport_dataset/test.json
+    --cfg-options data.test.ann_file=annotations/test.json
 ```
 
 ## License
