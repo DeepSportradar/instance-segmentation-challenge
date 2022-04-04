@@ -7,6 +7,7 @@
 One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize. See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
 **Table of contents**
+- [Challenge rules](#challenge-rules)
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
   - [The COCO-format annotation files](#the-coco-format-annotation-files)
