@@ -33,7 +33,7 @@ Futhermore, the fact that humans are approximately the same size makes the metri
 
 As this is a segmentation challenge, the goal is to obtain the best `segm_mAP` metric on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on an unannotated *challenge* set that will be provided late in June.
 
-The competitors are asked to do create models that only rely on the provided data for training. (except for initial weights that can come from well-established public methods pre-trained on public data **this must be clearly stated**)
+The competitors are asked to do create models that only rely on the provided data for training. (except for initial weights that can come from well-established public methods pre-trained on public data. **This must be clearly stated**)
 
 Please see the challenge page for more details: [https://deepsportradar.github.io/challenge.html](https://deepsportradar.github.io/challenge.html).
 
@@ -113,7 +113,7 @@ python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.p
     --eval bbox segm
 ```
 
-When the challenge set is released (as a new set of images and a `challenge.json` file **without no annotation**), the following commands could be used to obtain the submission file:
+When the challenge set is released (as a new set of images and a `challenge.json` file **without any annotation**), the following commands could be used to obtain the submission file:
 
 ```bash
 python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
@@ -164,6 +164,8 @@ python3 tools/test_json.py test-output.json \
     --cfg-options data.test.ann_file=annotations/test.json
 ```
 
+Alternatively, submitting to the `Test` [phases on EvalAI](https://eval.ai/web/challenges/challenge-page/1685/phases) will provide the same results.
+
 ## License
 
-This repository is built from, and on top of MMDet, and distributed under the Apache 2.0 License.
+This repository is built from, and on top of [MMDet](https://github.com/open-mmlab/mmdetection), and distributed under the Apache 2.0 License.
