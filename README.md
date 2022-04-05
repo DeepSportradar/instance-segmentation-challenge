@@ -7,7 +7,7 @@
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
-One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize. See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
+One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
 **Table of contents**
 - [Challenge rules](#challenge-rules)
@@ -166,7 +166,7 @@ python3 tools/test_json.py test-output.json \
     --cfg-options data.test.ann_file=annotations/test.json
 ```
 
-Alternatively, submitting to the `Test` [phases on EvalAI](https://eval.ai/web/challenges/challenge-page/1685/phases) will provide the same results.
+Alternatively, submitting to the [`Test` phases on EvalAI](https://eval.ai/web/challenges/challenge-page/1685/phases) will provide the same results.
 
 ## License
 
