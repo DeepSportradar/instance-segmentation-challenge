@@ -41,7 +41,7 @@ Please see the challenge page for more details: [https://deepsportradar.github.i
 
 ### Downloading the dataset
 
-The dataset can be found [here](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset). It can be downloaded and unzipped manually in the `deepsport_dataset/` folder of the project.
+The dataset can be found [here](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset). It can be downloaded and unzipped manually in the `basketball-instants-dataset/` folder of the project.
 
 We will here download it programmatically. First install the kaggle CLI.
 
@@ -53,7 +53,7 @@ Go to your Kaggle Account page and click on `Create new API Token` to download t
 
 ```bash
 kaggle datasets download deepsportradar/basketball-instants-dataset
-unzip -qo ./basketball-instants-dataset.zip -d deepsport_dataset
+unzip -qo ./basketball-instants-dataset.zip -d basketball-instants-dataset
 ```
 
 ### The COCO-format annotation files

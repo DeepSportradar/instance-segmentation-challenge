@@ -20,7 +20,7 @@ def scan():
     """
     Compute the full COCO-format annotation JSON from the files on the disk.
     """
-    files = glob.glob(f'deepsport_dataset/*/*/*_humans.png')
+    files = glob.glob(f'basketball-instants-dataset/*/*/*_humans.png')
     images = set([re.sub(r"_(humans)\.png", "", file) for file in files])
     images = sorted(images)
 
@@ -68,7 +68,6 @@ def dump_split(name, splits, *, root):
     ret['categories'] = root['categories']
     ret['images'] = [image for image in root['images']
                      if image['file_name'].split('/')[0] in arenas]
-                     # FIXME Adapt when Kaggle deepsport_dataset_X are merged
     if name == 'train':
         del ret['images'][4::7]
     elif name == 'val':
