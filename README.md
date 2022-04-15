@@ -1,5 +1,3 @@
-# CHALLENGE STARTS OFFICIALLY APRIL 6th. Stay tuned. <!-- omit in toc -->
-
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm)
 [![Compete on EvalAI](https://badgen.net/badge/compete%20on/EvalAI/blue)](https://eval.ai/web/challenges/challenge-page/1685/overview)
 [![Win 2x $500.00](https://badgen.net/badge/win/2x%20%24500.00/yellow)](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html)
@@ -7,9 +5,9 @@
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
-![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner.png)
-
 One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
+
+![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner.png)
 
 **Table of contents**
 - [Challenge rules](#challenge-rules)
