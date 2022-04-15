@@ -7,6 +7,8 @@
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
+![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner.png)
+
 One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000,00 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
 **Table of contents**
@@ -36,9 +38,9 @@ Futhermore, the fact that humans are approximately the same size makes the metri
 
 As this is a segmentation challenge, the goal is to obtain the best `segm_mAP` metric on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on an unannotated *challenge* set that will be provided late in June.
 
-The competitors are asked to create models that only rely on the provided data for training. (except for initial weights that can come from well-established public methods pre-trained on public data. **This must be clearly stated in publication/report**)
+Only the data provided along with this challenge can be used for training the model. We however accept that the initial weigths of part, or the complete network, come from a established model zoo. (exact location has to be provided in the report/paper)
 
-Please see the challenge page for more details: [https://deepsportradar.github.io/challenge.html](https://deepsportradar.github.io/challenge.html).
+The complete set of rules is available on the EvalAI [challenge evaluation page](https://eval.ai/web/challenges/challenge-page/1685/evaluation)
 
 ## Installation
 
