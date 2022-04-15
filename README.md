@@ -38,7 +38,7 @@ As this is a segmentation challenge, the goal is to obtain the best `segm_mAP` m
 
 Only the data provided along with this challenge can be used for training the model. We however accept that the initial weigths of part, or the complete network, come from a established model zoo. (exact location has to be provided in the report/paper)
 
-The complete set of rules is available on the EvalAI [challenge evaluation page](https://eval.ai/web/challenges/challenge-page/1685/evaluation)
+The complete set of rules is available on the EvalAI [challenge evaluation page](https://eval.ai/web/challenges/challenge-page/1685/evaluation).
 
 ## Installation
 
