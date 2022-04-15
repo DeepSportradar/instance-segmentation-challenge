@@ -78,19 +78,18 @@ Having no change with respect to the annotation files distributed confirms that 
 
 The provided annotations are first split in a *trainval* set (246 images) and a *test* set (64 images), each containing images taken from different arenas. We further split the *trainval* set in the *train* (211 images) and *val* (35 images) sets in a deterministic manner.
 
-We encourage to use those sets as it pleases, but remember you'd probably want to avoid overfitting the *test* set. Another set of **unannotated** images, the *challenge* set will be provided later to establish the true leaderboards.
+The *test* split should be used to communicate about your model performance publicly, and your model should never see it during training, except maybe for a final submission on the challenge. An **unannotated** set of images, the *challenge* set will be provided later to establish the true challenge leaderboards.
 
-To make the splits as convenient as possible to use, each of *train*, *val*, *test*, *trainval* and *trainvaltest* sets have their own JSON. It is for instance useful to train the very final model on *trainvaltest* for it to have seen as much data as possible before inference on the *challenge* images.
+To make the splits as convenient as possible to use, each of *train*, *val*, *test*, *trainval* and *trainvaltest* sets have their own JSON. It could for instance be useful to train the very final model on *trainvaltest* for it to have seen as much data as possible before inference on the *challenge* images.
 
 ## Using MMDet
 
 ### Installation
 
-https://mmdetection.readthedocs.io/en/v2.2.0/install.html
-
+For simplicity, we propose to install MMDet using [MIM](https://github.com/open-mmlab/mim).
 
 ```bash
-pip install openmim
+pip3 install openmim
 mim install mmdet==2.21.0
 ```
 
