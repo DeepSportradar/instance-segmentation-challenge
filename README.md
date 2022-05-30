@@ -7,12 +7,13 @@
 
 One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
-![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner.png)
+![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner_large.png)
 
 **Table of contents**
 - [Challenge rules](#challenge-rules)
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
+    - [Setting up the challenge set](#setting-up-the-challenge-set)
   - [The COCO-format annotation files](#the-coco-format-annotation-files)
   - [About the splits](#about-the-splits)
 - [Using MMDet](#using-mmdet)
@@ -59,6 +60,13 @@ kaggle datasets download deepsportradar/basketball-instants-dataset
 unzip -qo ./basketball-instants-dataset.zip -d basketball-instants-dataset
 ```
 
+#### Setting up the challenge set
+
+```bash
+wget https://arena-data.keemotion.com/tmp/gva/mmsports_challenge_set_data.zip
+unzip -qo mmsports_challenge_set_data.zip -d basketball-instants-dataset
+```
+
 ### The COCO-format annotation files
 
 The `.json` files provided in the `annotations/` folder by this repository are annotation files for the different splits of the dataset. They comply with the COCO format, and can be re-generated using the following command once the dataset is setup:
@@ -70,6 +78,7 @@ python3 tools/gen_annotations.py
 # trainval 260 images 2018 annotations
 # test 64 images 477 annotations
 # trainvaltest 324 images 2495 annotations
+# challenge 84 images 0 annotations
 ```
 
 Having no change with respect to the annotation files distributed confirms that the dataset is properly setup.
