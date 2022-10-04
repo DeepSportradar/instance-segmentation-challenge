@@ -5,6 +5,8 @@
 
 # DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
 
+## ** The DeepSportRadar Challenges will come back next year with some improvements, stay tuned on our [Discord channel](https://discord.gg/JvMQgMkpkm)! **
+
 One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
 ![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner_large.png)
@@ -23,6 +25,7 @@ One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/
 - [Participating with another codebase](#participating-with-another-codebase)
   - [Submission format](#submission-format)
   - [Computing metrics](#computing-metrics)
+- [Citation](#citation)
 - [License](#license)
 
 This challenge tackles the segmentation of individual humans (players, coaches and referees) on a basketball court. We believe the main characteristics of this dataset are that
@@ -175,6 +178,22 @@ python3 tools/test_json.py test-output.json \
 ```
 
 Alternatively, submitting to the [`Test` phases on EvalAI](https://eval.ai/web/challenges/challenge-page/1685/phases) will provide the same results.
+
+## Citation
+
+If you use any DeepSportradar dataset in your research or wish to refer to the baseline results and discussion published in [our paper](https://arxiv.org/abs/2208.08190), please use the following BibTeX entry:
+
+    @inproceedings{
+    Van_Zandycke_2022,
+    author = {Gabriel Van Zandycke and Vladimir Somers and Maxime Istasse and Carlo Del Don and Davide Zambrano},
+	title = {{DeepSportradar}-v1: Computer Vision Dataset for Sports Understanding with High Quality Annotations},
+	booktitle = {Proceedings of the 5th International {ACM} Workshop on Multimedia Content Analysis in Sports},
+	publisher = {{ACM}},
+    year = 2022,
+	month = {oct},
+    doi = {10.1145/3552437.3555699},
+    url = {https://doi.org/10.1145%2F3552437.3555699}
+    }
 
 ## License
 
