@@ -1,18 +1,20 @@
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/JvMQgMkpkm)
 [![Compete on EvalAI](https://badgen.net/badge/compete%20on/EvalAI/blue)](https://eval.ai/web/challenges/challenge-page/1685/overview)
-[![Win 2x $500](https://badgen.net/badge/win/2x%20%24500/yellow)](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html)
+[![Win $750](https://badgen.net/badge/win/%20%24750/yellow)](http://mmsports.multimedia-computing.de/mmsports2023/challenge.html)
 [![Kaggle Dataset](https://badgen.net/badge/kaggle/dataset/blue)](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset)
 
-# DeepSportRadar Instance Segmentation Challenge <!-- omit in toc -->
+# DeepSportRadar Instance Segmentation Challenge (v2, 2023) <!-- omit in toc -->
 
-## ** The DeepSportRadar Challenges will come back next year with some improvements, stay tuned on our [Discord channel](https://discord.gg/JvMQgMkpkm)! **
+**This repository is an improved version of last year's edition. It has been updated to work with MMDet v3 and is based on a novel instance segmentation metric targetting occlusions. [More information here](#updates-with-respect-to-last-year-edition)**.
 
-One of the [ACM MMSports 2022 Workshop](http://mmsports.multimedia-computing.de/mmsports2022/index.html) challenges. An opportunity to publish, as well as a $1000 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
+One of the [ACM MMSports 2023 Workshop](http://mmsports.multimedia-computing.de/mmsports2023/index.html) challenges. An opportunity to publish, as well as a $1000 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
 
 ![Instance segmentation banner](https://raw.githubusercontent.com/DeepSportRadar/instance-segmentation-challenge/master/assets/banner_large.png)
 
 **Table of contents**
 - [Challenge rules](#challenge-rules)
+- [Updates with respect to last year edition](#updates-with-respect-to-last-year-edition)
+  - [Our Occlusion Metric](#our-occlusion-metric)
 - [Installation](#installation)
   - [Downloading the dataset](#downloading-the-dataset)
     - [Setting up the challenge set](#setting-up-the-challenge-set)
@@ -36,13 +38,60 @@ This challenge tackles the segmentation of individual humans (players, coaches a
 
 Futhermore, the fact that humans are approximately the same size makes the metrics less tricky to break down, to focus on those particular problems.
 
+This year, the focus will be put on solving occlusions
+
 ## Challenge rules
 
-As this is a segmentation challenge, the goal is to obtain the best `segm_mAP` metric on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on an unannotated *challenge* set that will be provided late in June.
+As this is a segmentation challenge, the goal is to obtain the best `om` metric on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on the unannotated *challenge* set.
 
-Only the data provided along with this challenge can be used for training the model. We however accept that the initial weigths of part, or the complete network, come from a established model zoo. (exact location has to be provided in the report/paper)
+Only the data and annotations provided by this challenge can be used for training the model. We however accept that the initial weigths of part, or the complete network, come from a established model zoo. (exact location has to be provided in the report/paper)
 
 The complete set of rules is available on the EvalAI [challenge evaluation page](https://eval.ai/web/challenges/challenge-page/1685/evaluation).
+
+## Updates with respect to last year edition
+
+There are two main changes to this year's edition:
+
+- A novel metric is introduced, that focuses on the resolution of occlusions.
+- The repository is using MMDet v3, so as to be compatible with the latest open-source models.
+- The competition is single-stage
+
+### Our Occlusion Metric
+
+The metric determining the winner for this challenge will only take into account instances that appear split because of occlusions (according to ground-truth annotations). The assumption behind this choice is that models that are able to solve the hardest instances of the dataset should naturally solve the easiest ones, so we choose to focus on the former. Whether this assumption holds is actually a good question, and we invite you to try to prove us wrong by reaching a very high Occlusion Metric (OM) and a low mAP. Reaching a high mAP does however not induce any penalty: we are equally happy if the obtained models are good for real.
+
+The OM metric is the product of Occluded Instance Recall (OIR) and the  Disconnected Pixel Recall (DPR), i.e. *the recall of pixels disconnected from the main body of recalled occluded instances*.
+
+The true positive (TP) prediction for a ground-truth instance is that with the highest IoU (and above 0.5). All the others are false positives (FP) predictions. In order to penalize FP instances in the metric, the contribution of a disconnected pixel recalled by a TP prediction to the DPR is lowered by higher-confidence FP that include it.
+
+```
+# OM Computation Pseudocode
+
+Given ground-truth instance masks
+  and predicted instance masks
+  and predicted instance scores
+
+Compute the IoU between ground-truth and predicted instance masks
+Assign, to each ground-truth mask, the predicted mask with highest
+  IoU ( > 0.5 )
+  => yielding TP, FP and FN
+
+Keep only TP and FN instances whose annotated mask is made of
+  several connected components
+Compute OIR = |TP|/(|TP|+|FN|)
+
+For each TP instance:
+  Ignore the largest connected component of the annotated mask
+  For each pixel in other annotated connected components:
+    Compute reward = current instance score / sum of scores of
+      higher-or-equal-score instances predicting this pixel
+    If pixel in the predicted mask:
+      R += reward
+    T += 1
+Compute DPR = R/T
+
+OM = DPR*OIR
+```
 
 ## Installation
 
@@ -98,11 +147,15 @@ To make the splits as convenient as possible to use, each of *train*, *val*, *te
 
 ### Installation
 
-For simplicity, we propose to install MMDet using [MIM](https://github.com/open-mmlab/mim).
+For simplicity, as recommended in [MMDet's documentation](https://mmdetection.readthedocs.io/en/latest/get_started.html#installation), we propose to install MMCV and MMEngine using MIM, and MMDet from github:
 
 ```bash
-pip3 install openmim
-mim install mmdet==2.21.0
+pip3 install -U openmim
+mim install mmengine
+mim install "mmcv>=2.0.0"
+
+git clone https://github.com/open-mmlab/mmdetection.git
+pip install -v -e mmdetection
 ```
 
 ### Baseline
@@ -110,35 +163,34 @@ mim install mmdet==2.21.0
 We propose the well-established Mask-RCNN model provided by MMDet as a baseline for this challenge.
 
 ```bash
-python3 tools/train.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py
+python3 tools/train.py configs/challenge/mask_rcnn_r50_fpn_200e_challenge.py
 ```
 
-Feel free to integrate any improvement or try a completely different model!
+Feel free to integrate any improvement or try a completely different model! Bottom-up or transformer-based methods are of course allowed.
 
 ### Test, metrics and submission
 
 Testing can be performed using the following command:
 
 ```bash
-python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
-    work_dirs/mask_rcnn_x101_64x4d_fpn_20e_challenge/latest.pth \
+python3 tools/test.py configs/challenge/mask_rcnn_r50_fpn_200e_challenge.py \
+    work_dirs/mask_rcnn_r50_fpn_200e_challenge/epoch_200.pth \
     --show-dir test-vis \
-    --out test-output.pkl \
+    --out test-output.json \
     --eval bbox segm
 ```
 
-When the challenge set is released (as a new set of images and a `challenge.json` file **without any annotation**), the following commands could be used to obtain the submission file:
+For generating a submission for the challenge set (the set of images and a `challenge.json` file **without any annotation**), the following commands can be used to obtain the submission file:
 
 ```bash
-python3 tools/test.py configs/challenge/mask_rcnn_x101_64x4d_fpn_20e_challenge.py \
-    work_dirs/mask_rcnn_x101_64x4d_fpn_20e_challenge/latest.pth \
-    --cfg-options data.test.ann_file=annotations/challenge.json \
+python3 tools/test.py configs/challenge/mask_rcnn_r50_fpn_200e_challenge.py \
+    work_dirs/mask_rcnn_r50_fpn_200e_challenge/latest.pth \
+    --cfg-options test_dataloader.dataset.ann_file=annotations/challenge.json \
     --show-dir challenge-vis \
-    --out challenge-output.pkl
-python3 tools/convert_output.py challenge-output.pkl
+    --out challenge-output.json
 ```
 
-And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). Please note that it would not make sense to pass the `--eval bbox segm` arguments as there will be no annotation on that set.
+And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/1685/overview). Please note that the output metrics computed locally do not make sense as there are no annotation for that set.
 
 ## Participating with another codebase
 
@@ -152,12 +204,14 @@ What really matters in the end is for the submission file to be in the right for
 [image_result] A list of image results, in the same order as the images
                in the JSON set file
 
-image_result: [
-    [bbox],     one bounding box for each detection
-    [rle_mask]  one rle-encoded mask for each detection
-]
+image_result: {
+    "labels": [class],    the label for each detection (should be 0)
+    "scores": [score],    a confidence for each detection (in [0., 1.])
+    "bboxes": [bbox],     one bounding box for each detection
+    "masks":  [rle_mask]  one rle-encoded mask for each detection
+}
 
-bbox: [x1, y1, x2, y2, confidence]
+bbox: [x1, y1, x2, y2]
 
 rle_mask: {
     "size": [H, W], the mask shape, basically image height and width
@@ -173,8 +227,8 @@ More details to generate the RLE representation from masks can be found in [tool
 Metrics with respect to the test set (or any other set) can be computed using the `tools/test_json.py` script.
 
 ```bash
-python3 tools/test_json.py test-output.json \
-    --cfg-options data.test.ann_file=annotations/test.json
+python3 tools/test_json.py --evaluate test-output.json \
+    --gt annotations/test.json
 ```
 
 Alternatively, submitting to the [`Test` phases on EvalAI](https://eval.ai/web/challenges/challenge-page/1685/phases) will provide the same results.
@@ -183,18 +237,20 @@ Alternatively, submitting to the [`Test` phases on EvalAI](https://eval.ai/web/c
 
 If you use any DeepSportradar dataset in your research or wish to refer to the baseline results and discussion published in [our paper](https://arxiv.org/abs/2208.08190), please use the following BibTeX entry:
 
-    @inproceedings{
-    Van_Zandycke_2022,
-    author = {Gabriel Van Zandycke and Vladimir Somers and Maxime Istasse and Carlo Del Don and Davide Zambrano},
-	title = {{DeepSportradar}-v1: Computer Vision Dataset for Sports Understanding with High Quality Annotations},
-	booktitle = {Proceedings of the 5th International {ACM} Workshop on Multimedia Content Analysis in Sports},
-	publisher = {{ACM}},
-    year = 2022,
-	month = {oct},
-    doi = {10.1145/3552437.3555699},
-    url = {https://doi.org/10.1145%2F3552437.3555699}
-    }
+```
+@inproceedings{Van_Zandycke_2022,
+  author = {Gabriel Van Zandycke and Vladimir Somers and Maxime Istasse and Carlo Del Don and Davide Zambrano},
+  title = {{DeepSportradar}-v1: Computer Vision Dataset for Sports Understanding with High Quality Annotations},
+  booktitle = {Proceedings of the 5th International {ACM} Workshop on Multimedia Content Analysis in Sports},
+  publisher = {{ACM}},
+  year = 2022,
+  month = {oct},
+  doi = {10.1145/3552437.3555699},
+  url = {https://doi.org/10.1145%2F3552437.3555699}
+}
+```
 
 ## License
 
-This repository is built from, and on top of [MMDet](https://github.com/open-mmlab/mmdetection), and distributed under the Apache 2.0 License.
+- This repository is built from, and on top of [MMDet](https://github.com/open-mmlab/mmdetection), and distributed under the [Apache 2.0 License](https://github.com/DeepSportradar/instance-segmentation-challenge/blob/master/LICENSE).
+- The challenge data, hosted on [Kaggle](https://www.kaggle.com/datasets/gabrielvanzandycke/deepsport-dataset), is available under the [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) license.

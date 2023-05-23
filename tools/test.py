@@ -2,24 +2,66 @@
 import argparse
 import os
 import os.path as osp
-import time
 import warnings
+import collections
+import torch, torch.nn as nn, torch.nn.functional as F
+from copy import deepcopy
+from typing import Sequence, Optional, Any
 
-import mmcv
-import torch
-from mmcv import Config, DictAction
-from mmcv.cnn import fuse_conv_bn
-from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
-from mmcv.runner import (get_dist_info, init_dist, load_checkpoint,
-                         wrap_fp16_model)
+from mmengine import ConfigDict
+from mmengine.fileio import dump
+from mmengine.logging import print_log
+from mmengine.registry import METRICS
+from mmengine.config import Config, DictAction
+from mmengine.runner import Runner
+from mmengine.evaluator import DumpResults, BaseMetric
+from mmengine.evaluator.metric import _to_cpu
 
-from mmdet.apis import multi_gpu_test, single_gpu_test
-from mmdet.datasets import (build_dataloader, build_dataset,
-                            replace_ImageToTensor)
-from mmdet.models import build_detector
-from mmdet.utils import setup_multi_processes
+from mmdet.structures.mask import encode_mask_results
+from mmdet.engine.hooks.utils import trigger_visualization_hook
+from mmdet.evaluation import DumpDetResults, CocoMetric
+from mmdet.registry import RUNNERS
+from mmdet.utils import setup_cache_size_limit_of_dynamo
+import occlusion_metric
 
 
+Ñ=None
+
+
+class DumpPrediction(BaseMetric):
+    def __init__(self,
+                 out_file_path: str,
+                 collect_device: str = 'cpu',
+                 collect_dir: Optional[str] = None) -> None:
+        super().__init__(
+            collect_device=collect_device, collect_dir=collect_dir)
+        if not out_file_path.endswith(('.json',)):
+            raise ValueError('The output file must be a json file.')
+        self.out_file_path = out_file_path
+
+    def process(self, data_batch: dict, data_samples: Sequence[dict]) -> None:
+        data_samples = _to_cpu(data_samples)
+        for data_sample in data_samples:
+            src = data_sample['pred_instances']
+            res = dict()
+            res['img_id'] = data_sample['img_id']
+            res['bboxes'] = src['bboxes'].tolist()
+            res['scores'] = src['scores'].tolist()
+            res['labels'] = src['labels'].tolist()
+            res['masks'] = encode_mask_results(src['masks'].numpy())
+            for m in res['masks']:
+                m['counts'] = m['counts'].decode('utf-8')
+            self.results.append(res)
+
+    def compute_metrics(self, results: list) -> dict:
+        dump(sorted(results, key=lambda res: res['img_id']), self.out_file_path)
+        print_log(
+            f'Predictions have been saved to {self.out_file_path}.',
+            logger='current')
+        return {}
+
+
+# TODO: support fuse_conv_bn and format_only
 def parse_args():
     parser = argparse.ArgumentParser(
         description='MMDet test (and eval) a model')
@@ -28,52 +70,19 @@ def parse_args():
     parser.add_argument(
         '--work-dir',
         help='the directory to save the file containing evaluation metrics')
-    parser.add_argument('--out', help='output result file in pickle format')
     parser.add_argument(
-        '--fuse-conv-bn',
-        action='store_true',
-        help='Whether to fuse conv and bn, this will slightly increase'
-        'the inference speed')
-    parser.add_argument(
-        '--gpu-ids',
-        type=int,
-        nargs='+',
-        help='(Deprecated, please use --gpu-id) ids of gpus to use '
-        '(only applicable to non-distributed training)')
-    parser.add_argument(
-        '--gpu-id',
-        type=int,
-        default=0,
-        help='id of gpu to use '
-        '(only applicable to non-distributed testing)')
-    parser.add_argument(
-        '--format-only',
-        action='store_true',
-        help='Format the output results without perform evaluation. It is'
-        'useful when you want to format the result to a specific format and '
-        'submit it to the test server')
-    parser.add_argument(
-        '--eval',
+        '--out',
         type=str,
-        nargs='+',
-        help='evaluation metrics, which depends on the dataset, e.g., "bbox",'
-        ' "segm", "proposal" for COCO, and "mAP", "recall" for PASCAL VOC')
-    parser.add_argument('--show', action='store_true', help='show results')
+        help='dump predictions to a json file for offline evaluation')
     parser.add_argument(
-        '--show-dir', help='directory where painted images will be saved')
+        '--show', action='store_true', help='show prediction results')
     parser.add_argument(
-        '--show-score-thr',
-        type=float,
-        default=0.3,
-        help='score threshold (default: 0.3)')
+        '--show-dir',
+        help='directory where painted images will be saved. '
+        'If specified, it will be automatically saved '
+        'to the work_dir/timestamp/show_dir')
     parser.add_argument(
-        '--gpu-collect',
-        action='store_true',
-        help='whether to use gpu to collect results.')
-    parser.add_argument(
-        '--tmpdir',
-        help='tmp directory used for collecting results from multiple '
-        'workers, available when gpu-collect is not specified')
+        '--wait-time', type=float, default=2, help='the interval of show (s)')
     parser.add_argument(
         '--cfg-options',
         nargs='+',
@@ -85,175 +94,101 @@ def parse_args():
         'Note that the quotation marks are necessary and that no white space '
         'is allowed.')
     parser.add_argument(
-        '--options',
-        nargs='+',
-        action=DictAction,
-        help='custom options for evaluation, the key-value pair in xxx=yyy '
-        'format will be kwargs for dataset.evaluate() function (deprecate), '
-        'change to --eval-options instead.')
-    parser.add_argument(
-        '--eval-options',
-        nargs='+',
-        action=DictAction,
-        help='custom options for evaluation, the key-value pair in xxx=yyy '
-        'format will be kwargs for dataset.evaluate() function')
-    parser.add_argument(
         '--launcher',
         choices=['none', 'pytorch', 'slurm', 'mpi'],
         default='none',
         help='job launcher')
-    parser.add_argument('--local_rank', type=int, default=0)
+    parser.add_argument('--tta', action='store_true')
+    # When using PyTorch version >= 2.0.0, the `torch.distributed.launch`
+    # will pass the `--local-rank` parameter to `tools/train.py` instead
+    # of `--local_rank`.
+    parser.add_argument('--local_rank', '--local-rank', type=int, default=0)
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
-
-    if args.options and args.eval_options:
-        raise ValueError(
-            '--options and --eval-options cannot be both '
-            'specified, --options is deprecated in favor of --eval-options')
-    if args.options:
-        warnings.warn('--options is deprecated in favor of --eval-options')
-        args.eval_options = args.options
     return args
 
 
 def main():
     args = parse_args()
 
-    assert args.out or args.eval or args.format_only or args.show \
-        or args.show_dir, \
-        ('Please specify at least one operation (save/eval/format/show the '
-         'results / save the results) with the argument "--out", "--eval"'
-         ', "--format-only", "--show" or "--show-dir"')
+    # Reduce the number of repeated compilations and improve
+    # testing speed.
+    setup_cache_size_limit_of_dynamo()
 
-    if args.eval and args.format_only:
-        raise ValueError('--eval and --format_only cannot be both specified')
-
-    if args.out is not None and not args.out.endswith(('.pkl', '.pickle')):
-        raise ValueError('The output file must be a pkl file.')
-
+    # load config
     cfg = Config.fromfile(args.config)
+    cfg.launcher = args.launcher
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)
 
-    # set multi-process settings
-    setup_multi_processes(cfg)
+    # work_dir is determined in this priority: CLI > segment in file > filename
+    if args.work_dir is not None:
+        # update configs according to CLI args if args.work_dir is not None
+        cfg.work_dir = args.work_dir
+    elif cfg.get('work_dir', None) is None:
+        # use config filename as default work_dir if cfg.work_dir is None
+        cfg.work_dir = osp.join('./work_dirs',
+                                osp.splitext(osp.basename(args.config))[0])
 
-    # set cudnn_benchmark
-    if cfg.get('cudnn_benchmark', False):
-        torch.backends.cudnn.benchmark = True
+    cfg.load_from = args.checkpoint
 
-    cfg.model.pretrained = None
-    if cfg.model.get('neck'):
-        if isinstance(cfg.model.neck, list):
-            for neck_cfg in cfg.model.neck:
-                if neck_cfg.get('rfp_backbone'):
-                    if neck_cfg.rfp_backbone.get('pretrained'):
-                        neck_cfg.rfp_backbone.pretrained = None
-        elif cfg.model.neck.get('rfp_backbone'):
-            if cfg.model.neck.rfp_backbone.get('pretrained'):
-                cfg.model.neck.rfp_backbone.pretrained = None
+    if args.show or args.show_dir:
+        cfg = trigger_visualization_hook(cfg, args)
 
-    # in case the test dataset is concatenated
-    samples_per_gpu = 1
-    if isinstance(cfg.data.test, dict):
-        cfg.data.test.test_mode = True
-        samples_per_gpu = cfg.data.test.pop('samples_per_gpu', 1)
-        if samples_per_gpu > 1:
-            # Replace 'ImageToTensor' to 'DefaultFormatBundle'
-            cfg.data.test.pipeline = replace_ImageToTensor(
-                cfg.data.test.pipeline)
-    elif isinstance(cfg.data.test, list):
-        for ds_cfg in cfg.data.test:
-            ds_cfg.test_mode = True
-        samples_per_gpu = max(
-            [ds_cfg.pop('samples_per_gpu', 1) for ds_cfg in cfg.data.test])
-        if samples_per_gpu > 1:
-            for ds_cfg in cfg.data.test:
-                ds_cfg.pipeline = replace_ImageToTensor(ds_cfg.pipeline)
+    if args.tta:
 
-    if args.gpu_ids is not None:
-        cfg.gpu_ids = args.gpu_ids[0:1]
-        warnings.warn('`--gpu-ids` is deprecated, please use `--gpu-id`. '
-                      'Because we only support single GPU mode in '
-                      'non-distributed testing. Use the first GPU '
-                      'in `gpu_ids` now.')
+        if 'tta_model' not in cfg:
+            warnings.warn('Cannot find ``tta_model`` in config, '
+                          'we will set it as default.')
+            cfg.tta_model = dict(
+                type='DetTTAModel',
+                tta_cfg=dict(
+                    nms=dict(type='nms', iou_threshold=0.5), max_per_img=100))
+        if 'tta_pipeline' not in cfg:
+            warnings.warn('Cannot find ``tta_pipeline`` in config, '
+                          'we will set it as default.')
+            test_data_cfg = cfg.test_dataloader.dataset
+            while 'dataset' in test_data_cfg:
+                test_data_cfg = test_data_cfg['dataset']
+            cfg.tta_pipeline = deepcopy(test_data_cfg.pipeline)
+            flip_tta = dict(
+                type='TestTimeAug',
+                transforms=[
+                    [
+                        dict(type='RandomFlip', prob=1.),
+                        dict(type='RandomFlip', prob=0.)
+                    ],
+                    [
+                        dict(
+                            type='PackDetInputs',
+                            meta_keys=('img_id', 'img_path', 'ori_shape',
+                                       'img_shape', 'scale_factor', 'flip',
+                                       'flip_direction'))
+                    ],
+                ])
+            cfg.tta_pipeline[-1] = flip_tta
+        cfg.model = ConfigDict(**cfg.tta_model, module=cfg.model)
+        cfg.test_dataloader.dataset.pipeline = cfg.tta_pipeline
+
+    # build the runner from config
+    if 'runner_type' not in cfg:
+        # build the default runner
+        runner = Runner.from_cfg(cfg)
     else:
-        cfg.gpu_ids = [args.gpu_id]
+        # build customized runner from the registry
+        # if 'runner_type' is set in the cfg
+        runner = RUNNERS.build(cfg)
 
-    # init distributed env first, since logger depends on the dist info.
-    if args.launcher == 'none':
-        distributed = False
-    else:
-        distributed = True
-        init_dist(args.launcher, **cfg.dist_params)
+    # add `DumpResults` dummy metric
+    if args.out is not None:
+        assert args.out.endswith(('.json')), \
+            'The dump file must be a json file.'
+        runner.test_evaluator.metrics.append(
+            DumpPrediction(out_file_path=args.out))
 
-    rank, _ = get_dist_info()
-    # allows not to create
-    if args.work_dir is not None and rank == 0:
-        mmcv.mkdir_or_exist(osp.abspath(args.work_dir))
-        timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
-        json_file = osp.join(args.work_dir, f'eval_{timestamp}.json')
-
-    # build the dataloader
-    dataset = build_dataset(cfg.data.test)
-    data_loader = build_dataloader(
-        dataset,
-        samples_per_gpu=samples_per_gpu,
-        workers_per_gpu=cfg.data.workers_per_gpu,
-        dist=distributed,
-        shuffle=False)
-
-    # build the model and load checkpoint
-    cfg.model.train_cfg = None
-    model = build_detector(cfg.model, test_cfg=cfg.get('test_cfg'))
-    fp16_cfg = cfg.get('fp16', None)
-    if fp16_cfg is not None:
-        wrap_fp16_model(model)
-    checkpoint = load_checkpoint(model, args.checkpoint, map_location='cpu')
-    if args.fuse_conv_bn:
-        model = fuse_conv_bn(model)
-    # old versions did not save class info in checkpoints, this walkaround is
-    # for backward compatibility
-    if 'CLASSES' in checkpoint.get('meta', {}):
-        model.CLASSES = checkpoint['meta']['CLASSES']
-    else:
-        model.CLASSES = dataset.CLASSES
-
-    if not distributed:
-        model = MMDataParallel(model, device_ids=cfg.gpu_ids)
-        outputs = single_gpu_test(model, data_loader, args.show, args.show_dir,
-                                  args.show_score_thr)
-    else:
-        model = MMDistributedDataParallel(
-            model.cuda(),
-            device_ids=[torch.cuda.current_device()],
-            broadcast_buffers=False)
-        outputs = multi_gpu_test(model, data_loader, args.tmpdir,
-                                 args.gpu_collect)
-
-    rank, _ = get_dist_info()
-    if rank == 0:
-        if args.out:
-            print(f'\nwriting results to {args.out}')
-            mmcv.dump(outputs, args.out)
-        kwargs = {} if args.eval_options is None else args.eval_options
-        if args.format_only:
-            dataset.format_results(outputs, **kwargs)
-        if args.eval:
-            eval_kwargs = cfg.get('evaluation', {}).copy()
-            # hard-code way to remove EvalHook args
-            for key in [
-                    'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
-                    'rule', 'dynamic_intervals'
-            ]:
-                eval_kwargs.pop(key, None)
-            eval_kwargs.update(dict(metric=args.eval, **kwargs))
-            metric = dataset.evaluate(outputs, **eval_kwargs)
-            print(metric)
-            metric_dict = dict(config=args.config, metric=metric)
-            if args.work_dir is not None and rank == 0:
-                mmcv.dump(metric_dict, json_file)
+    # start testing
+    runner.test()
 
 
 if __name__ == '__main__':

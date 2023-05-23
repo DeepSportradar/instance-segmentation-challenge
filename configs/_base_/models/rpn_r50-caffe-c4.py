@@ -1,6 +1,12 @@
 # model settings
 model = dict(
     type='RPN',
+    data_preprocessor=dict(
+        type='DetDataPreprocessor',
+        mean=[103.530, 116.280, 123.675],
+        std=[1.0, 1.0, 1.0],
+        bgr_to_rgb=False,
+        pad_size_divisor=32),
     backbone=dict(
         type='ResNet',
         depth=50,
@@ -47,7 +53,7 @@ model = dict(
                 pos_fraction=0.5,
                 neg_pos_ub=-1,
                 add_gt_as_proposals=False),
-            allowed_border=0,
+            allowed_border=-1,
             pos_weight=-1,
             debug=False)),
     test_cfg=dict(

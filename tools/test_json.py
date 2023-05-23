@@ -1,76 +1,56 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 import argparse
 import os
-import os.path as osp
-import time
-import warnings
-
-from mmcv import Config, DictAction
-from mmcv.cnn import fuse_conv_bn
-from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
-from mmcv.runner import (get_dist_info, init_dist, load_checkpoint,
-                         wrap_fp16_model)
-
-from mmdet.apis import multi_gpu_test, single_gpu_test
-from mmdet.datasets import (build_dataloader, build_dataset,
-                            replace_ImageToTensor)
-from mmdet.models import build_detector
-from mmdet.utils import setup_multi_processes
-
-import pickle
-import json
-import sys
-sys.path.insert(0, './')
-from tools.convert_output import json_to_pkl
+import torch
+from mmdet.evaluation import CocoMetric
+from occlusion_metric import OcclusionMetric, ann_to_om
 
 
+# TODO: support fuse_conv_bn and format_only
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='MMDet test (and eval) a model')
-    parser.add_argument('json', help='json output file')
-    parser.add_argument('--unsafe', default=False, action='store_true')
+        description='Test a model')
+    # When using PyTorch version >= 2.0.0, the `torch.distributed.launch`
+    # will pass the `--local-rank` parameter to `tools/train.py` instead
+    # of `--local_rank`.
     parser.add_argument(
-        '--cfg-options',
-        nargs='+',
-        action=DictAction,
-        help='override some settings in the used config, the key-value pair '
-        'in xxx=yyy format will be merged into config file. If the value to '
-        'be overwritten is a list, it should be like key="[a,b]" or key=a,b '
-        'It also allows nested list/tuple values, e.g. key="[(a,b),(c,d)]" '
-        'Note that the quotation marks are necessary and that no white space '
-        'is allowed.')
-
+        '--gt',
+        type=str,
+        help='gt file to dump or to evaluate against')
+    parser.add_argument(
+        '--evaluate',
+        type=str,
+        help='Only perform evaluation, against given gt file.')
     args = parser.parse_args()
+    if 'LOCAL_RANK' not in os.environ:
+        os.environ['LOCAL_RANK'] = str(args.local_rank)
     return args
 
 
 def main():
     args = parse_args()
 
-    assert args.json.endswith('.json') or args.unsafe
+    om = OcclusionMetric(ann_file=args.gt)
+    map = CocoMetric(
+        ann_file=args.gt,
+        metric=['bbox', 'segm'],
+        format_only=False,
+        backend_args=None)
+    map._dataset_meta = dict(classes=['human'])
 
-    cfg = Config.fromfile('configs/challenge/deepsportradar_instances.py')
-    if args.cfg_options is not None:
-        cfg.merge_from_dict(args.cfg_options)
-    cfg.data.test.test_mode = True
+    import json
+    gts = ann_to_om(args.gt)
+    preds = json.load(open(args.evaluate, 'r'))
 
-    # build the dataloader
-    dataset = build_dataset(cfg.data.test)
-    if args.json.endswith('.json'):
-        outputs = json_to_pkl(json.load(open(args.json, 'r')))
-    elif args.json.endswith('.pkl') and args.unsafe:
-        outputs = pickle.load(open(args.json, 'rb'))
-
-    eval_kwargs = cfg.get('evaluation', {}).copy()
-    # hard-code way to remove EvalHook args
-    for key in [
-            'interval', 'tmpdir', 'start', 'gpu_collect', 'save_best',
-            'rule', 'dynamic_intervals'
-    ]:
-        eval_kwargs.pop(key, None)
-    eval_kwargs.update(dict(metric=['bbox', 'segm']))
-    print(len(dataset))
-    metric = dataset.evaluate(outputs, **eval_kwargs)
-    print(metric)
+    for pred in preds:
+        pred['bboxes'] = torch.tensor(pred['bboxes'])
+        pred['scores'] = torch.tensor(pred['scores'])
+        pred['labels'] = torch.tensor(pred['labels'])
+        for mask in pred['masks']:
+            mask['counts'] = mask['counts'].encode('utf-8')
+    results = list(zip(gts, preds))
+    print(map.compute_metrics(results))
+    print(om.compute_metrics(results))
 
 
 if __name__ == '__main__':
