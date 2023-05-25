@@ -159,7 +159,7 @@ python3 tools/test.py configs/challenge/mask_rcnn_r50_fpn_200e_challenge.py \
     --out challenge-output.json
 ```
 
-And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/2070/overview). Please note that the output metrics computed locally do not make sense as there are no annotation for that set.
+And here should appear the resulting `challenge-output.json` file ready to be uploaded on [EvalAI](https://eval.ai/web/challenges/challenge-page/2070/overview). Please note that the output metrics computed locally do not make sense as there are no annotations for that set.
 
 ## Participating with another codebase
 
@@ -200,7 +200,7 @@ python3 tools/test_json.py --evaluate test-output.json \
     --gt annotations/test.json
 ```
 
-Alternatively, submitting to the [`Test` phases on EvalAI](https://eval.ai/web/challenges/challenge-page/2070/phases) will provide the same results.
+Alternatively, submitting to the [`Test` phase on EvalAI](https://eval.ai/web/challenges/challenge-page/2070/phases) will provide the same results.
 
 ## Updates with respect to last year edition
 
