@@ -9,7 +9,7 @@
 
 **This repository is an improved version of last year's edition. It has been updated to work with MMDet v3 and is based on a novel instance segmentation metric targetting occlusions. [More information here](#updates-with-respect-to-last-year-edition)**.
 
-One of the [ACM MMSports 2023 Workshop](http://mmsports.multimedia-computing.de/mmsports2023/index.html) challenges. An opportunity to publish, as well as a $1000 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/2070/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2022/challenge.html) for more details.
+One of the [ACM MMSports 2023 Workshop](http://mmsports.multimedia-computing.de/mmsports2023/index.html) challenges. An opportunity to publish, as well as a $1000 prize by competing on [EvalAI](https://eval.ai/web/challenges/challenge-page/2070/overview). See [this page](http://mmsports.multimedia-computing.de/mmsports2023/challenge.html) for more details.
 
 Congratulations again to the [2022 winners](#2022-winners)! Please do not hesitate to reuse their [code](https://github.com/YJingyu/Instanc_Segmentation_Pro) or [ideas](https://arxiv.org/abs/2209.13899) for this edition.
 
@@ -120,6 +120,9 @@ pip3 install -U openmim
 mim install mmengine
 mim install "mmcv>=2.0.0"
 
+# EITHER
+mim install mmdet
+# OR
 git clone https://github.com/open-mmlab/mmdetection.git
 pip install -v -e mmdetection
 ```
