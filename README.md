@@ -47,15 +47,17 @@ This year, the focus will be put on solving occlusions.
 
 ## Challenge rules
 
-1. As this is a segmentation challenge, the goal is to obtain the highest **occlusion metric** ([described here](#the-occlusion-metric)) on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on the unannotated *challenge* set.
+1. As this is a segmentation challenge, the goal is to obtain the highest **occlusion metric** ([described here](https://github.com/DeepSportradar/instance-segmentation-challenge#the-occlusion-metric)) on images that were not seen during training. In particular, the leaderboards that provide rewards will be built on the unannotated *challenge* set.
 
 2. Only the data and annotations provided by this challenge can be used for training the model. We however accept that the initial weigths of part, or the complete network, come from an established model. (exact source has to be provided in the report/paper)
 
 3. Participants are allowed to train their final model on all provided data (train + test sets) before evaluating on the challenge set.
 
-4. Annotations provided should not be modified, unless shared publicly on Discord more than 2 months before the end of the challenge.
+4. Annotations provided should not be modified, unless shared publicly on Discord more than 1 month before the end of the phase of interest.
 
 5. Any team of one or more members can participate in the challenge, except the organizers. However, only one account per team should be used for submission on the challenge set.
+
+6. After the first phase of the challenge, a publication in the workshop proceedings will be conditioned to the acceptance through the peer-review process and registration to the workshop.
 
 The complete set of rules is available on the EvalAI [challenge evaluation page](https://eval.ai/web/challenges/challenge-page/2070/evaluation).
 
@@ -189,7 +191,7 @@ rle_mask: {
 }
 ```
 
-More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py#L47=). Bounding boxes can also be computed from the mask as is demonstrated [there](tools/gen_annotations.py#L54=), please don't forget to add the confidence and reorder the items if needed.
+More details to generate the RLE representation from masks can be found in [tools/gen_annotations.py](tools/gen_annotations.py#L47=). Bounding boxes can also be computed from the mask as is demonstrated [there](tools/gen_annotations.py#L54=), please don't forget to reorder the items if needed.
 
 ### Computing metrics
 
