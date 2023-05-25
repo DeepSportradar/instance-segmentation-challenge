@@ -14,7 +14,7 @@ def parse_args():
     # will pass the `--local-rank` parameter to `tools/train.py` instead
     # of `--local_rank`.
     parser.add_argument(
-        '--gt',
+        '--gt', '--ann-file',
         type=str,
         help='gt file to dump or to evaluate against')
     parser.add_argument(
@@ -22,15 +22,13 @@ def parse_args():
         type=str,
         help='Only perform evaluation, against given gt file.')
     args = parser.parse_args()
-    if 'LOCAL_RANK' not in os.environ:
-        os.environ['LOCAL_RANK'] = str(args.local_rank)
     return args
 
 
 def main():
     args = parse_args()
 
-    om = OcclusionMetric(ann_file=args.gt)
+    om = OcclusionMetric()
     map = CocoMetric(
         ann_file=args.gt,
         metric=['bbox', 'segm'],

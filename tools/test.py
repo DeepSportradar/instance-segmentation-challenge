@@ -84,6 +84,8 @@ def parse_args():
     parser.add_argument(
         '--wait-time', type=float, default=2, help='the interval of show (s)')
     parser.add_argument(
+        '--ann-file', '--gt', default=None, help='Annotation file')
+    parser.add_argument(
         '--cfg-options',
         nargs='+',
         action=DictAction,
@@ -132,6 +134,10 @@ def main():
                                 osp.splitext(osp.basename(args.config))[0])
 
     cfg.load_from = args.checkpoint
+
+    if args.ann_file:
+        cfg.test_evaluator[0].ann_file = args.ann_file
+        cfg.test_dataloader.dataset.ann_file = args.ann_file
 
     if args.show or args.show_dir:
         cfg = trigger_visualization_hook(cfg, args)

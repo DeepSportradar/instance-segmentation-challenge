@@ -185,12 +185,13 @@ def compute_matching_masks(id1, id2):
 
 def compute_intersection_masks_scores(parts, preds, scores):
     scores = preds.mul(scores[:,Ñ,Ñ])
-    cumscores = scores.cumsum(dim=0)
+    # cumscores = scores.cumsum(dim=0)
+    sumscores = scores.sum(dim=0)
 
     res = {}
     for pred_id in range(preds.shape[0]):
         pred_mask = preds[pred_id]
-        pred_pixelscore = scores[pred_id]/cumscores[pred_id]
+        pred_pixelscore = scores[pred_id]/sumscores
         part_ids = parts[pred_mask]
         for part_id in torch.unique(part_ids).tolist():
             part_mask = parts == part_id
@@ -251,13 +252,6 @@ def ann_to_om(ann_file):
 class OcclusionMetric(BaseMetric):
     default_prefix: Optional[str] = 'occ'
 
-    def __init__(self,
-                 ann_file: Optional[str] = None,
-                 collect_device: str = 'cpu',
-                 prefix: Optional[str] = None) -> None:
-        super().__init__(collect_device=collect_device, prefix=prefix)
-        self.ann_file = ann_file
-
     def process(self, data_batch: dict, data_samples: Sequence[dict]) -> None:
         data_samples = _to_cpu(data_samples)
         for data_sample in data_samples:
@@ -306,5 +300,5 @@ class OcclusionMetric(BaseMetric):
             OIR=frac(gri,gti),
             DPR=frac(grp,gtp)
             )
-        print("OM={OM}".format(**ret))
+        print("OM={OM} OIR={OIR} DPR={DPR}".format(**ret))
         return ret

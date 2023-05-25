@@ -88,7 +88,13 @@ val_evaluator = dict(
     format_only=False,
     backend_args=backend_args)
 
-test_evaluator = dict(type='OcclusionMetric')
+test_evaluator = [
+    dict(type='CocoMetric',
+         ann_file=data_root + 'annotations/test.json',
+         metric=['bbox', 'segm'],
+         format_only=False,
+         backend_args=backend_args),
+    dict(type='OcclusionMetric')]
 
 # inference on test dataset and
 # format the output results for submission.
