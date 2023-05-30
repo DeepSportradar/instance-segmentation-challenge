@@ -53,9 +53,9 @@ This year, the focus will be put on solving occlusions.
 
 3. Participants are allowed to train their final model on all provided data (train + test sets) before evaluating on the challenge set.
 
-4. Annotations provided should not be modified, unless shared publicly on Discord more than 1 month before the end of the phase of interest.
+4. Annotations provided should not be modified, and no annotation should be added. We propose to discuss erroneous annotations on Discord and to integrate corrections for the next version of the challenge.
 
-5. Any team of one or more members can participate in the challenge, except the organizers. However, only one account per team should be used for submission on the challenge set.
+5. Any team of one or more members can participate in the challenge, except the challenge organizers. However, only one account per team should be used for submission on the challenge set so as to have a consistent limit for every team.
 
 6. After the first phase of the challenge, a publication in the workshop proceedings will be conditioned to the acceptance through the peer-review process and registration to the workshop.
 
