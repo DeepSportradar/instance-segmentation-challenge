@@ -69,7 +69,7 @@ def compute_parts_2(base_ids, rebase=True):
     uptr = F.unfold(ptr[Ñ,Ñ].float(), (3,3), padding=1, stride=1).int().view(9,H,W)  # float32 OK until 2**24, double otherwise (2**53)
     S = mask.count_nonzero()
 
-    new_ids = base_ids.new_zeros(base_ids.shape)
+    new_ids = base_ids.new_zeros(base_ids.shape, dtype=torch.int32)
     new_ids[mask] = torch.arange(S, dtype=torch.int32)+1
     fids = new_ids[mask]
     fadj = adjacency[:,mask]
