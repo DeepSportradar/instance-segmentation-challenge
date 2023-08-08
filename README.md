@@ -3,8 +3,6 @@
 [![Win 2x$500](https://badgen.net/badge/win/2x%20%24500/yellow)](http://mmsports.multimedia-computing.de/mmsports2023/challenge.html)
 [![Kaggle Dataset](https://badgen.net/badge/kaggle/dataset/blue)](https://www.kaggle.com/datasets/deepsportradar/basketball-instants-dataset)
 
-**Challenge starts on June, 1st. Until then, it could be that everything is not ready yet.**
-
 # DeepSportRadar Instance Segmentation Challenge (v2, 2023) <!-- omit in toc -->
 
 **This repository is an improved version of last year's edition. It has been updated to work with MMDet v3 and is based on a novel instance segmentation metric targetting occlusions. [More information here](#updates-with-respect-to-last-year-edition)**.
@@ -217,7 +215,7 @@ The metric determining the winner for this challenge will only take into account
 
 The OM metric is the product of Occluded Instance Recall (OIR), *i.e. the recall of instances appearing visually split*, and the  Disconnected Pixel Recall (DPR), i.e. *the recall of pixels disconnected from the main body of recalled split instances*.
 
-For a ground-truth instance, its true positive (TP) prediction is that with the highest IoU (and above 0.5), if any. All the others are false positives (FP) predictions. Ground-truth instances without associated prediction are false negatives (FN). In order to penalize FP instances in the metric, the contribution of a disconnected pixel recalled by a TP prediction to the DPR is lowered by higher-confidence FP that include it.
+For a ground-truth instance, its true positive (TP) prediction is that with the highest IoU (and above 0.5), if any. All the others are false positives (FP) predictions. Ground-truth instances without associated prediction are false negatives (FN). In order to penalize FP instances in the metric, the contribution of a disconnected pixel recalled by a TP prediction to the DPR is lowered by other FPs that include it.
 
 ```
 # OM Computation Pseudocode
